@@ -1,0 +1,49 @@
+---
+// 1. On importe le Layout commun à toutes nos pages
+import Layout from "../layouts/Layout.astro";
+---
+
+<!-- 2. On utilise le Layout comme balise principale. --><!--    On en profite pour lui donner un titre de page personnalisé. -->
+<Layout title="À Propos - INFODROP">
+    <!-- 3. Ici, c'est le contenu UNIQUE à notre page "À propos". -->
+    <!--    Ce contenu sera injecté dans le <slot /> du Layout. -->
+    <div class="prose prose-invert max-w-none">
+        <h1 class="text-4xl font-bold text-white mb-4">À propos d'INFODROP</h1>
+
+        <p class="text-lg">
+            INFODROP est un projet de veille informationnelle dont l'objectif
+            est de centraliser et de présenter de manière claire les actualités
+            provenant de sources multiples et d'orientations variées.
+        </p>
+
+        <h2 class="text-2xl font-bold text-white mt-8 mb-3">La mission</h2>
+        <p>
+            Dans un paysage médiatique saturé, il devient difficile de se forger
+            une opinion éclairée. Notre mission est de fournir un outil
+            permettant de visualiser rapidement le spectre de l'information, de
+            comparer les traitements médiatiques et d'encourager la
+            diversification des lectures.
+        </p>
+
+        <h2 class="text-2xl font-bold text-white mt-8 mb-3">La technologie</h2>
+        <p>
+            Ce projet est en cours de refactorisation vers une stack technique
+            moderne et performante :
+        </p>
+        <ul class="list-disc list-inside">
+            <li>
+                <strong>Astro</strong> pour le rendu ultra-rapide côté serveur.
+            </li>
+            <li>
+                <strong>Tailwind CSS</strong> pour un design sur-mesure et maintenable.
+            </li>
+            <li>
+                <strong>Alpine.js</strong> pour l'interactivité légère côté client.
+            </li>
+            <li>
+                <strong>Supabase</strong> comme backend pour la gestion des données
+                et l'authentification.
+            </li>
+        </ul>
+    </div>
+</Layout>

@@ -1,0 +1,54 @@
+---
+
+---
+
+<div
+    x-data="{
+    loading: false,
+    email: '',
+    inviteCode: '',
+    message: '',
+    async submit() {
+      this.loading = true;
+      this.message = '';
+      const { user, error } = await supabase.auth.signInWithOtp({ email: this.email });
+      this.loading = false;
+      if (error) {
+        this.message = 'Erreur : ' + error.message;
+      } else {
+        this.message = 'Vérifie ta boîte mail pour le lien magique de connexion !';
+      }
+    }
+  }"
+    class="max-w-sm w-full mx-auto bg-gray-800/50 p-8 rounded-xl shadow-2xl border border-gray-700"
+>
+    <h1 class="text-3xl font-bold text-center text-white mb-2">📰 INFODROP</h1>
+    <p class="text-gray-400 text-center mb-8">
+        Le Club privé de l’actu centralisée
+    </p>
+
+    <form @submit.prevent="submit" class="space-y-4">
+        <input
+            type="email"
+            x-model="email"
+            required
+            placeholder="votre@email.com"
+            class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white"
+        />
+        <input
+            type="text"
+            x-model="inviteCode"
+            placeholder="Code d'invitation (si nouveau)"
+            class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white"
+        />
+        <button
+            type="submit"
+            class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition"
+            :disabled="loading"
+        >
+            <span x-show="!loading">Recevoir le lien magique</span>
+            <span x-show="loading">Envoi…</span>
+        </button>
+    </form>
+    <p class="text-sm text-center mt-3 text-green-400" x-text="message"></p>
+</div>

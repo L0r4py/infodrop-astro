@@ -1,0 +1,90 @@
+---
+/* Bandeau défilant continu
+   – initTicker($data) (main.js) renseigne date, météo, lune, crypto…
+   – La piste .ticker-track est dupliquée pour couvrir ≥ 200 % de la largeur
+   – Survol  = pause temporaire     •  Clic = toggle pause / reprise
+*/
+---
+
+<div
+    x-data="{
+    date:'', day:0, temp:null, wIcon:'', wText:'',
+    moon:'', left:0, btc:null, eth:null
+  }"
+    x-init="
+    initTicker($data);
+
+    /* Duplique la piste jusqu’à couvrir ≥ 2 largeurs d’écran */
+    $nextTick(() => {
+      const track = $el.querySelector('.ticker-track');
+      track.innerHTML += track.innerHTML;          // premier doublon
+      while (track.offsetWidth < $el.offsetWidth * 2) {
+        track.innerHTML += track.innerHTML;        // sécurité
+      }
+    });
+  "
+    class="w-full bg-gray-800/60 backdrop-blur-sm text-[15px]
+         border-b border-gray-700 overflow-hidden"
+>
+    <!-- PISTE QUI DÉFILE ------------------------------------------------>
+    <div
+        class="ticker-track inline-flex gap-x-6 items-center px-4 py-1"
+        x-data="{ paused:false }"
+        :class="{ 'paused': paused }"
+        @click="paused = !paused"
+    >
+        <!-- Lune -->
+        <span class="flex items-center gap-1" x-text="moon"></span>
+
+        <!-- Jour ordinal -->
+        <span class="flex items-center gap-1">
+            📊 Jour <span x-text="day"></span>/365
+        </span>
+
+        <!-- Compteur 2026 -->
+        <span class="flex items-center gap-1">
+            ⏳ <span x-text="left"></span> jours avant 2026
+        </span>
+
+        <!-- Crypto BTC/USD -->
+        <a
+            href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSD"
+            target="_blank"
+            rel="noopener"
+            class="flex items-center gap-1 no-underline hover:text-blue-400 transition cursor-pointer"
+            title="Voir le graphique BTC/USD"
+        >
+            <span class="text-lg">🪙</span> BTC&nbsp;/USD&nbsp;
+            <span
+                x-text="btc !== null ? btc.toLocaleString('fr-FR') + ' $' : '…'"
+            ></span>
+        </a>
+
+        <!-- Crypto ETH/USD -->
+        <a
+            href="https://www.tradingview.com/chart/?symbol=BINANCE:ETHUSD"
+            target="_blank"
+            rel="noopener"
+            class="flex items-center gap-1 no-underline hover:text-purple-400 transition cursor-pointer"
+            title="Voir le graphique ETH/USD"
+        >
+            <span class="text-lg">♦️</span> ETH&nbsp;/USD&nbsp;
+            <span
+                x-text="eth !== null ? eth.toLocaleString('fr-FR') + ' $' : '…'"
+            ></span>
+        </a>
+
+        <!-- Date complète -->
+        <span class="flex items-center gap-1">
+            📅 <span x-text="date"></span>
+        </span>
+
+        <!-- Météo -->
+        <template x-if="temp !== null">
+            <span class="flex items-center gap-1">
+                <span x-text="wIcon"></span>
+                <span x-text="temp"></span>°C <span x-text="wText"></span>
+            </span>
+        </template>
+    </div>
+</div>

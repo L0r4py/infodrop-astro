@@ -1,0 +1,40 @@
+---
+const { code, parrainEmail, filleulEmail } = Astro.props;
+---
+
+<div class="bg-gray-800/50 border border-gray-700 rounded-lg my-1 px-4 py-2">
+    <div class="flex flex-col items-center">
+        {
+            code && (
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-yellow-400 text-xs">🎁</span>
+                    <span class="text-gray-300 text-xs">Code à partager :</span>
+                    <span class="font-mono bg-gray-900 px-1.5 py-0.5 rounded cursor-pointer hover:bg-gray-700 transition text-white text-xs border border-gray-600">
+                        {code}
+                    </span>
+                </div>
+            )
+        }
+        {!code && <div class="text-xs text-gray-400">👥 Infos parrainage</div>}
+        <div class="flex gap-3">
+            {
+                parrainEmail && (
+                    <div class="flex items-center gap-1 text-xs">
+                        <span class="text-green-400">👆</span>
+                        <span class="text-gray-400">Invité par :</span>
+                        <span class="font-mono text-white">{parrainEmail}</span>
+                    </div>
+                )
+            }
+            {
+                filleulEmail && (
+                    <div class="flex items-center gap-1 text-xs">
+                        <span class="text-purple-400">👇</span>
+                        <span class="text-gray-400">Votre filleul :</span>
+                        <span class="font-mono text-white">{filleulEmail}</span>
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</div>

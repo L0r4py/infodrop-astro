@@ -1,0 +1,68 @@
+/* ================================================================== */
+/*          STYLES GLOBAUX - LA VERSION PARFAITE ET DÉFINITIVE        */
+/* ================================================================== */
+
+/* ------------------------------------------------------------------
+   1. IMPORTS
+------------------------------------------------------------------ */
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+
+
+/* ------------------------------------------------------------------
+   2. STYLES CSS CLASSIQUES
+------------------------------------------------------------------ */
+.ticker-track {
+    white-space: nowrap;
+    animation: ticker-scroll 40s linear infinite;
+}
+
+.ticker-track:hover,
+.ticker-track.paused {
+    animation-play-state: paused;
+    cursor: pointer;
+}
+
+.ticker-track span {
+    white-space: nowrap;
+}
+
+@keyframes ticker-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+
+/* ------------------------------------------------------------------
+   3. CLASSES UTILITAIRES PERSONNALISÉES
+------------------------------------------------------------------ */
+@layer utilities {
+
+    .section {
+        @apply mb-8;
+    }
+
+    @media (min-width: theme('screens.md')) {
+        .section {
+            @apply mb-10;
+        }
+    }
+
+    .btn-primary {
+        @apply rounded-md bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors;
+    }
+
+    .btn-primary:hover {
+        @apply bg-blue-500;
+    }
+
+    .btn-primary:focus-visible {
+        @apply outline outline-2 outline-offset-2 outline-blue-600;
+    }
+}
