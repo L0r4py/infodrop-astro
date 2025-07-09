@@ -8,11 +8,42 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
-
+/* ------------------------------------------------------------------
+   2. VARIABLES CSS PERSONNALISÉES
+------------------------------------------------------------------ */
+:root {
+    --color-primary: #3B82F6;
+    --color-secondary: #6366F1;
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-gray-50: #F9FAFB;
+    --color-gray-900: #111827;
+}
 
 /* ------------------------------------------------------------------
-   2. STYLES CSS CLASSIQUES
+   3. STYLES CSS CLASSIQUES
 ------------------------------------------------------------------ */
+
+/* === SCROLLBAR PERSONNALISÉE === */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111827;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* === BANDEAU TICKER DÉFILANT === */
 .ticker-track {
     white-space: nowrap;
     animation: ticker-scroll 40s linear infinite;
@@ -38,6 +69,78 @@
     }
 }
 
+/* === ANIMATIONS GÉNÉRALES === */
+.news-card {
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.news-card:hover {
+    transform: translateY(-2px);
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.loading-pulse {
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .5;
+    }
+}
+
+/* === ANIMATION CONFETTIS === */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    animation: confetti-fall 3s linear forwards;
+}
+
+@keyframes confetti-fall {
+    to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* === FOCUS STATES AMÉLIORÉS === */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* === TRANSITIONS GLOBALES === */
+* {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
 
 /* ------------------------------------------------------------------
    3. CLASSES UTILITAIRES PERSONNALISÉES
@@ -64,5 +167,215 @@
 
     .btn-primary:focus-visible {
         @apply outline outline-2 outline-offset-2 outline-blue-600;
+    }
+
+    .btn-secondary {
+        @apply rounded-md bg-gray-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors;
+    }
+
+    .btn-secondary:hover {
+        @apply bg-gray-500;
+    }
+
+    .btn-danger {
+        @apply rounded-md bg-red-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors;
+    }
+
+    .btn-danger:hover {
+        @apply bg-red-500;
+    }
+
+    /* === CLASSES POUR LES CARTES === */
+    .card {
+        @apply bg-gray-800/50 border border-gray-700 rounded-lg p-4;
+    }
+
+    .card-header {
+        @apply border-b border-gray-700 pb-3 mb-3;
+    }
+
+    /* === CLASSES POUR LES FORMULAIRES === */
+    .form-input {
+        @apply w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500;
+    }
+
+    .form-select {
+        @apply w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium text-gray-300 mb-1;
+    }
+
+    /* === CLASSES POUR LES ALERTES === */
+    .alert {
+        @apply p-3 rounded-lg text-sm border;
+    }
+
+    .alert-success {
+        @apply bg-green-900/50 text-green-300 border-green-700;
+    }
+
+    .alert-error {
+        @apply bg-red-900/50 text-red-300 border-red-700;
+    }
+
+    .alert-warning {
+        @apply bg-yellow-900/50 text-yellow-300 border-yellow-700;
+    }
+
+    .alert-info {
+        @apply bg-blue-900/50 text-blue-300 border-blue-700;
+    }
+
+    /* === CLASSES POUR LES BADGES === */
+    .badge {
+        @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+    }
+
+    .badge-primary {
+        @apply bg-blue-600 text-white;
+    }
+
+    .badge-secondary {
+        @apply bg-gray-600 text-white;
+    }
+
+    .badge-success {
+        @apply bg-green-600 text-white;
+    }
+
+    .badge-warning {
+        @apply bg-yellow-600 text-white;
+    }
+
+    .badge-error {
+        @apply bg-red-600 text-white;
+    }
+
+    /* === CLASSES POUR LE LOADING === */
+    .spinner {
+        @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+    }
+
+    .spinner-lg {
+        @apply w-8 h-8 border-4;
+    }
+
+    /* === CLASSES POUR LES ORIENTATIONS POLITIQUES === */
+    .orientation-extreme-gauche {
+        @apply bg-red-600 text-white;
+    }
+
+    .orientation-gauche {
+        @apply bg-red-500 text-white;
+    }
+
+    .orientation-centre-gauche {
+        @apply bg-red-400 text-white;
+    }
+
+    .orientation-centre {
+        @apply bg-gray-500 text-white;
+    }
+
+    .orientation-centre-droit {
+        @apply bg-blue-400 text-white;
+    }
+
+    .orientation-droite {
+        @apply bg-blue-500 text-white;
+    }
+
+    .orientation-extreme-droite {
+        @apply bg-blue-600 text-white;
+    }
+
+    .orientation-gouvernement {
+        @apply bg-blue-800 text-blue-100;
+    }
+
+    .orientation-neutre {
+        @apply bg-green-700 text-green-100;
+    }
+
+    .orientation-infodrop {
+        @apply bg-gray-600 text-white border-2 border-white font-black;
+    }
+
+    /* === CLASSES RESPONSIVE === */
+    .container-responsive {
+        @apply w-full max-w-4xl mx-auto px-4;
+    }
+
+    @media (min-width: theme('screens.sm')) {
+        .container-responsive {
+            @apply px-6;
+        }
+    }
+
+    @media (min-width: theme('screens.lg')) {
+        .container-responsive {
+            @apply px-8;
+        }
+    }
+
+    /* === CLASSES POUR L'ACCESSIBILITÉ === */
+    .sr-only {
+        @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+
+    .focus-ring {
+        @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900;
+    }
+
+    /* === CLASSES POUR LES ÉTATS === */
+    .disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+
+    .loading {
+        @apply opacity-75 cursor-wait;
+    }
+
+    /* === CLASSES POUR LES GRADIENTS === */
+    .gradient-primary {
+        @apply bg-gradient-to-r from-blue-600 to-purple-600;
+    }
+
+    .gradient-success {
+        @apply bg-gradient-to-r from-green-600 to-emerald-600;
+    }
+
+    .gradient-warning {
+        @apply bg-gradient-to-r from-yellow-600 to-orange-600;
+    }
+
+    .gradient-error {
+        @apply bg-gradient-to-r from-red-600 to-pink-600;
+    }
+
+    /* === CLASSES POUR LES OMBRES === */
+    .shadow-glow {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .shadow-glow-green {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .shadow-glow-red {
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+
+    /* === CLASSES POUR LES GLASS EFFECTS === */
+    .glass {
+        @apply bg-white/10 backdrop-blur-sm border border-white/20;
+    }
+
+    .glass-dark {
+        @apply bg-black/20 backdrop-blur-sm border border-white/10;
     }
 }

@@ -2,11 +2,12 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="404 - Page Introuvable - INFODROP">
-    <div class="flex flex-col items-center justify-center text-center">
+<Layout title="404 - Page Introuvable - INFODROP" showHeaderAndTicker={false}>
+    <div class="min-h-screen flex items-center justify-center p-4 bg-gray-900">
         <div
-            class="w-full max-w-lg rounded-xl bg-gray-800/50 border border-gray-700 p-8 shadow-2xl flex flex-col items-center"
+            class="w-full max-w-lg rounded-xl bg-gray-800/50 border border-gray-700 p-8 shadow-2xl flex flex-col items-center text-center"
         >
+            <!-- Icône d'erreur -->
             <div
                 class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-500/10"
             >
@@ -26,25 +27,90 @@ import Layout from "../layouts/Layout.astro";
                 </svg>
             </div>
 
+            <!-- Code 404 stylisé -->
             <p
-                class="text-7xl font-black bg-gradient-to-br from-blue-400 to-purple-500 bg-clip-text text-transparent"
+                class="text-7xl font-black bg-gradient-to-br from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4"
             >
                 404
             </p>
 
+            <!-- Titre -->
             <h1
-                class="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl"
+                class="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-4"
             >
                 Page Introuvable
             </h1>
 
-            <p class="mt-4 text-base text-gray-400">
+            <!-- Description -->
+            <p class="text-base text-gray-400 mb-6 leading-relaxed">
                 Le lien que vous avez suivi est peut-être cassé, ou la page a
                 été supprimée. Vérifiez l'URL pour toute erreur de frappe.
             </p>
 
-            <div class="mt-10">
-                <a href="/" class="btn-primary"> ← Retour au Flux 24H </a>
+            <!-- Boutons d'action -->
+            <div class="space-y-3 w-full">
+                <a
+                    href="/"
+                    class="btn-primary w-full inline-flex items-center justify-center gap-2"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    Retour au Flux 24H
+                </a>
+
+                <a
+                    href="/apropos"
+                    class="btn-secondary w-full inline-flex items-center justify-center gap-2"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                    À propos d'INFODROP
+                </a>
+            </div>
+
+            <!-- Message d'aide -->
+            <div
+                class="mt-6 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg w-full"
+            >
+                <p class="text-xs text-blue-300 flex items-start gap-2">
+                    <span class="text-sm">💡</span>
+                    <span>
+                        Besoin d'aide ? Contactez-nous sur
+                        <a
+                            href="https://x.com/LOR4_14"
+                            target="_blank"
+                            class="text-blue-400 hover:underline font-medium"
+                        >
+                            @LOR4_14
+                        </a>
+                    </span>
+                </p>
+            </div>
+
+            <!-- Code de statut pour les développeurs -->
+            <div class="mt-4 text-xs text-gray-500 font-mono">
+                HTTP 404 • INFODROP v4.0.0-beta
             </div>
         </div>
     </div>

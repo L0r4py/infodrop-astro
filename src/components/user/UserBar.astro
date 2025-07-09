@@ -1,0 +1,86 @@
+---
+// UserBar.astro - Composant pour la carte de parrainage (optionnel, déjà intégré dans index.astro)
+---
+
+<!-- Ce composant est maintenant directement intégré dans index.astro --><!-- Cette version est gardée pour référence ou usage futur -->
+<div
+    class="bg-gray-800/50 border border-gray-700 rounded-lg my-1 px-4 py-2"
+    x-data="{ showDetails: false }"
+>
+    <!-- En-tête avec code principal -->
+    <button
+        @click="showDetails = !showDetails"
+        class="w-full flex items-center justify-between"
+    >
+        <div class="flex items-center gap-2">
+            <span class="text-yellow-400 text-xs" x-show="userInviteData.code"
+                >🎁</span
+            >
+            <span class="text-gray-300 text-xs">
+                <span x-show="userInviteData.code">Code: </span>
+                <span x-show="!userInviteData.code">Parrainage</span>
+            </span>
+            <span
+                x-show="userInviteData.code"
+                class="font-mono bg-gray-900 px-1.5 py-0.5 rounded cursor-pointer hover:bg-gray-700 transition text-white text-xs border border-gray-600"
+                @click.stop="copyInviteMessage(userInviteData.code)"
+                x-text="userInviteData.code"
+            >
+            </span>
+        </div>
+        <svg
+            class="h-4 w-4 transition-transform"
+            :class="{ 'rotate-180': showDetails }"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+        >
+            <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"></path>
+        </svg>
+    </button>
+
+    <!-- Détails dépliables -->
+    <div
+        x-show="showDetails"
+        x-transition
+        class="mt-3 pt-3 border-t border-gray-700 space-y-2"
+    >
+        <!-- Parrain -->
+        <div
+            x-show="userInviteData.parrainEmail"
+            class="flex items-center justify-between text-xs"
+        >
+            <span class="text-gray-400 flex items-center gap-1">
+                <span class="text-green-400">👆</span>
+                Invité par:
+            </span>
+            <span
+                class="font-mono text-white"
+                x-text="userInviteData.parrainEmail"></span>
+        </div>
+
+        <!-- Filleul -->
+        <div
+            x-show="userInviteData.filleulEmail"
+            class="flex items-center justify-between text-xs"
+        >
+            <span class="text-gray-400 flex items-center gap-1">
+                <span class="text-purple-400">👇</span>
+                Votre filleul:
+            </span>
+            <span
+                class="font-mono text-white"
+                x-text="userInviteData.filleulEmail"></span>
+        </div>
+
+        <!-- Message si pas de relations -->
+        <div
+            x-show="!userInviteData.parrainEmail && !userInviteData.filleulEmail"
+            class="text-xs text-gray-500 text-center"
+        >
+            Aucune relation de parrainage pour le moment
+        </div>
+    </div>
+</div>

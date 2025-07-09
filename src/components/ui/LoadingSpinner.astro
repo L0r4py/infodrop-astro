@@ -1,0 +1,82 @@
+---
+// src/components/ui/LoadingSpinner.astro
+// Composant spinner réutilisable avec différentes tailles et messages
+const {
+    size = "md",
+    message = "Chargement...",
+    centered = true,
+    fullScreen = false,
+} = Astro.props as {
+    size?: "sm" | "md" | "lg" | "xl";
+    message?: string;
+    centered?: boolean;
+    fullScreen?: boolean;
+};
+
+const sizeClasses = {
+    sm: "w-4 h-4 border-2",
+    md: "w-8 h-8 border-4",
+    lg: "w-12 h-12 border-4",
+    xl: "w-16 h-16 border-[6px]",
+};
+
+const containerClasses = fullScreen
+    ? "min-h-screen flex items-center justify-center bg-gray-900"
+    : centered
+      ? "flex items-center justify-center py-12"
+      : "inline-flex items-center gap-2";
+---
+
+<div class={containerClasses}>
+    <div class="inline-flex flex-col items-center gap-3">
+        <!-- Spinner -->
+        <div
+            class={`${sizeClasses[size]} border-blue-500 border-t-transparent rounded-full animate-spin`}
+        >
+        </div>
+
+        <!-- Message -->
+        {
+            message && (
+                <p
+                    class={`text-gray-400 ${size === "sm" ? "text-xs" : size === "lg" || size === "xl" ? "text-base" : "text-sm"}`}
+                >
+                    {message}
+                </p>
+            )
+        }
+    </div>
+</div>
+
+<style>
+    /* Animation personnalisée pour le spinner */
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+
+    /* Effet de pulsation subtile */
+    .animate-spin::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 50%;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+</style>

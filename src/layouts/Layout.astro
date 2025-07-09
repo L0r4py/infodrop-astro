@@ -5,10 +5,10 @@ import ContextTicker from "../components/ContextTicker.astro";
 import Footer from "../components/Footer.astro";
 
 const {
-    title = "INFODROP - Le Club privé de l’actu centralisée",
-    description = "Le Club privé de l’actu centralisée. Agrégation en temps réel. Info brute, multi-sources francophones, sans pub, sans algorithme ni biais.",
-    // L'image pour les partages sur les réseaux sociaux
+    title = "INFODROP - Le Club privé de l'actu centralisée",
+    description = "Le Club privé de l'actu centralisée. Agrégation en temps réel. Info brute, multi-sources francophones, sans pub, sans algorithme ni biais.",
     ogImage = "/images/infodrop-share.png",
+    showHeaderAndTicker = false, // Nouveau prop pour contrôler l'affichage du header/ticker
 } = Astro.props;
 ---
 
@@ -33,8 +33,7 @@ const {
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={new URL(ogImage, Astro.url)} />
 
-        <!-- Favicon et Icônes PWA (Progressive Web App) -->
-        <!-- Les fichiers sont servis depuis le dossier /public -->
+        <!-- Favicon et Icônes PWA -->
         <link rel="icon" type="image/png" href="/images/infodrop-favicon.png" />
         <link
             rel="apple-touch-icon"
@@ -88,7 +87,7 @@ const {
             rel="stylesheet"
         />
 
-        <!-- Scripts -->
+        <!-- Scripts essentiels -->
         <script src="/scripts/main.js" is:inline></script>
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
         ></script>
@@ -97,11 +96,26 @@ const {
     <body
         class="bg-gray-900 text-gray-300 min-h-screen flex flex-col font-sans"
     >
-        <Header />
-        <ContextTicker />
-        <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-8">
+        <!-- Header et Ticker conditionnels -->
+        {
+            showHeaderAndTicker && (
+                <>
+                    <Header />
+                    <ContextTicker />
+                </>
+            )
+        }
+
+        <!-- Contenu principal -->
+        <main
+            class={showHeaderAndTicker
+                ? "flex-1 w-full max-w-4xl mx-auto px-4 py-8"
+                : "flex-1 w-full"}
+        >
             <slot />
         </main>
-        <Footer />
+
+        <!-- Footer conditionnel -->
+        {showHeaderAndTicker && <Footer />}
     </body>
 </html>

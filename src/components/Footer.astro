@@ -1,7 +1,141 @@
 ---
-// src/components/Footer.astro
+/*
+ * Footer.astro - Version optimisée de votre excellent original
+ * Garde votre simplicité et ajoute quelques améliorations subtiles
+ */
 ---
-<footer class="text-center py-8 text-xs text-gray-500 mt-auto">
-    <p>© 2025 INFODROP. Tous droits réservés.</p>
-    <p class="mt-1">Un projet 3C - By Emile Marclin & L0r4.py [AI]</p>
+
+<footer
+    class="text-center py-8 text-xs text-gray-500 mt-auto border-t border-gray-800/50"
+    role="contentinfo"
+>
+    <!-- === COPYRIGHT (votre texte conservé) === -->
+    <p class="mb-2">© 2025 INFODROP. Tous droits réservés.</p>
+
+    <!-- === CRÉDITS ÉQUIPE (votre texte conservé avec amélioration) === -->
+    <p class="text-gray-600 mb-4">
+        Un projet 3C - By
+        <span class="font-medium text-gray-500">Emile Marclin</span> &
+        <span class="font-medium text-gray-500">L0r4.py</span>
+        <span class="text-gray-700">[AI]</span>
+    </p>
+
+    <!-- === LIENS RAPIDES (ajout utile) === -->
+    <div class="flex items-center justify-center gap-4 mb-4">
+        <a
+            href="/apropos"
+            class="hover:text-gray-400 transition focus-ring rounded px-1"
+            title="En savoir plus sur INFODROP"
+        >
+            À propos
+        </a>
+        <span class="text-gray-700" aria-hidden="true">•</span>
+        <a
+            href="https://x.com/LOR4_14"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-gray-400 transition focus-ring rounded px-1"
+            title="Support et contact sur Twitter"
+        >
+            Support
+            <span class="sr-only">(ouvre dans un nouvel onglet)</span>
+        </a>
+        <span class="text-gray-700" aria-hidden="true">•</span>
+        <span
+            class="font-mono text-gray-600"
+            title="Version actuelle d'INFODROP"
+        >
+            v4.0.0-beta
+        </span>
+    </div>
+
+    <!-- === STATUS ET PERFORMANCE (bonus subtil) === -->
+    <div class="flex items-center justify-center gap-2 text-xs text-gray-600">
+        <div class="flex items-center gap-1">
+            <div
+                class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"
+                aria-hidden="true"
+                title="Service en ligne"
+            >
+            </div>
+            <span>Service opérationnel</span>
+        </div>
+        <span aria-hidden="true">•</span>
+        <span id="build-time" title="Dernière mise à jour du site">
+            <!-- Will be populated by client-side script if needed -->
+        </span>
+    </div>
+
+    <!-- === ACCESSIBILITÉ === -->
+    <div class="sr-only">
+        <p>
+            INFODROP - Le club privé de l'actu centralisée. Site développé avec
+            Astro, Alpine.js et Tailwind CSS.
+        </p>
+    </div>
 </footer>
+
+<style>
+    /* Amélioration du focus pour l'accessibilité */
+    .focus-ring:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+    }
+
+    /* Optimisation pour les petits écrans */
+    @media (max-width: 640px) {
+        footer {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .flex {
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+    }
+
+    /* Amélioration du contraste si nécessaire */
+    @media (prefers-contrast: high) {
+        .text-gray-500 {
+            color: rgb(156 163 175);
+        }
+
+        .text-gray-600 {
+            color: rgb(156 163 175);
+        }
+    }
+
+    /* Réduction de mouvement */
+    @media (prefers-reduced-motion: reduce) {
+        .animate-pulse {
+            animation: none;
+            opacity: 1;
+        }
+
+        .transition {
+            transition: none;
+        }
+    }
+
+    /* Hover subtil pour les liens */
+    footer a:hover {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 2px;
+    }
+</style>
+
+<script>
+    // Optionnel : Afficher la date de build si disponible
+    document.addEventListener("DOMContentLoaded", function () {
+        const buildTimeElement = document.getElementById("build-time");
+        if (buildTimeElement) {
+            // Vous pouvez injecter cela via une variable d'environnement au build
+            const buildTime =
+                import.meta.env.BUILD_TIME ||
+                new Date().toLocaleDateString("fr-FR");
+            buildTimeElement.textContent = `Mis à jour le ${buildTime}`;
+        }
+    });
+</script>

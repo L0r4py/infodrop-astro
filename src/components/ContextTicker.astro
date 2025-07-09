@@ -1,90 +1,197 @@
 ---
-/* Bandeau défilant continu
-   – initTicker($data) (main.js) renseigne date, météo, lune, crypto…
-   – La piste .ticker-track est dupliquée pour couvrir ≥ 200 % de la largeur
-   – Survol  = pause temporaire     •  Clic = toggle pause / reprise
-*/
+/*
+ * ContextTicker.astro - Version optimisée de votre original
+ * Garde votre excellente logique de duplication et ajoute des améliorations
+ */
 ---
 
 <div
     x-data="{
-    date:'', day:0, temp:null, wIcon:'', wText:'',
-    moon:'', left:0, btc:null, eth:null
-  }"
+        date: '', day: 0, temp: null, wIcon: '', wText: '',
+        moon: '', left: 0, btc: null, eth: null
+    }"
     x-init="
-    initTicker($data);
+        initTicker($data);
 
-    /* Duplique la piste jusqu’à couvrir ≥ 2 largeurs d’écran */
-    $nextTick(() => {
-      const track = $el.querySelector('.ticker-track');
-      track.innerHTML += track.innerHTML;          // premier doublon
-      while (track.offsetWidth < $el.offsetWidth * 2) {
-        track.innerHTML += track.innerHTML;        // sécurité
-      }
-    });
-  "
-    class="w-full bg-gray-800/60 backdrop-blur-sm text-[15px]
-         border-b border-gray-700 overflow-hidden"
+        /* Votre excellente logique de duplication - conservée ! */
+        $nextTick(() => {
+            const track = $el.querySelector('.ticker-track');
+            track.innerHTML += track.innerHTML;          // premier doublon
+            while (track.offsetWidth < $el.offsetWidth * 2) {
+                track.innerHTML += track.innerHTML;        // sécurité pour très larges écrans
+            }
+        });
+    "
+    class="w-full bg-gray-800/60 backdrop-blur-sm text-[15px] border-b border-gray-700 overflow-hidden"
+    role="banner"
+    aria-label="Informations contextuelles en temps réel"
 >
-    <!-- PISTE QUI DÉFILE ------------------------------------------------>
+    <!-- PISTE QUI DÉFILE - Votre logique conservée et améliorée -->
     <div
         class="ticker-track inline-flex gap-x-6 items-center px-4 py-1"
-        x-data="{ paused:false }"
+        x-data="{ paused: false }"
         :class="{ 'paused': paused }"
         @click="paused = !paused"
+        @keydown.space.prevent="paused = !paused"
+        tabindex="0"
+        role="button"
+        :aria-label="paused ? 'Reprendre le défilement' : 'Mettre en pause le défilement'"
+        title="Cliquez pour mettre en pause/reprendre le défilement"
     >
-        <!-- Lune -->
-        <span class="flex items-center gap-1" x-text="moon"></span>
-
-        <!-- Jour ordinal -->
-        <span class="flex items-center gap-1">
-            📊 Jour <span x-text="day"></span>/365
+        <!-- Lune avec accessibilité améliorée -->
+        <span class="flex items-center gap-1" :title="`Phase lunaire: ${moon}`">
+            <span x-text="moon" aria-hidden="true"></span>
         </span>
 
-        <!-- Compteur 2026 -->
-        <span class="flex items-center gap-1">
-            ⏳ <span x-text="left"></span> jours avant 2026
+        <!-- Jour ordinal avec contexte -->
+        <span class="flex items-center gap-1" title="Progression de l'année">
+            <span class="text-blue-400" aria-hidden="true">📊</span>
+            <span class="sr-only">Jour</span>
+            <span
+                >Jour <span x-text="day" class="font-semibold text-white"
+                ></span>/365</span
+            >
         </span>
 
-        <!-- Crypto BTC/USD -->
+        <!-- Compteur 2026 avec urgence visuelle -->
+        <span
+            class="flex items-center gap-1"
+            title="Compte à rebours vers 2026"
+        >
+            <span class="text-green-400" aria-hidden="true">⏳</span>
+            <span x-text="left" class="font-semibold text-white"></span> jours avant
+            2026
+        </span>
+
+        <!-- Crypto BTC/USD avec lien vers graphique - Votre idée géniale ! -->
         <a
             href="https://www.tradingview.com/chart/?symbol=BINANCE:BTCUSD"
             target="_blank"
-            rel="noopener"
-            class="flex items-center gap-1 no-underline hover:text-blue-400 transition cursor-pointer"
-            title="Voir le graphique BTC/USD"
+            rel="noopener noreferrer"
+            class="flex items-center gap-1 no-underline hover:text-blue-400 transition cursor-pointer focus-ring rounded-sm px-1"
+            title="Voir le graphique BTC/USD sur TradingView"
+            x-show="btc !== null"
         >
-            <span class="text-lg">🪙</span> BTC&nbsp;/USD&nbsp;
+            <span class="text-lg" aria-hidden="true">🪙</span>
+            <span class="sr-only">Bitcoin prix:</span>
+            <span>BTC/USD </span>
             <span
                 x-text="btc !== null ? btc.toLocaleString('fr-FR') + ' $' : '…'"
-            ></span>
+                class="font-semibold text-white"></span>
         </a>
 
-        <!-- Crypto ETH/USD -->
+        <!-- Crypto ETH/USD avec lien -->
         <a
             href="https://www.tradingview.com/chart/?symbol=BINANCE:ETHUSD"
             target="_blank"
-            rel="noopener"
-            class="flex items-center gap-1 no-underline hover:text-purple-400 transition cursor-pointer"
-            title="Voir le graphique ETH/USD"
+            rel="noopener noreferrer"
+            class="flex items-center gap-1 no-underline hover:text-purple-400 transition cursor-pointer focus-ring rounded-sm px-1"
+            title="Voir le graphique ETH/USD sur TradingView"
+            x-show="eth !== null"
         >
-            <span class="text-lg">♦️</span> ETH&nbsp;/USD&nbsp;
+            <span class="text-lg" aria-hidden="true">♦️</span>
+            <span class="sr-only">Ethereum prix:</span>
+            <span>ETH/USD </span>
             <span
                 x-text="eth !== null ? eth.toLocaleString('fr-FR') + ' $' : '…'"
-            ></span>
+                class="font-semibold text-white"></span>
         </a>
 
         <!-- Date complète -->
-        <span class="flex items-center gap-1">
-            📅 <span x-text="date"></span>
+        <span
+            class="flex items-center gap-1"
+            x-show="date"
+            title="Date actuelle"
+        >
+            <span class="text-yellow-400" aria-hidden="true">📅</span>
+            <span x-text="date"></span>
         </span>
 
-        <!-- Météo -->
-        <template x-if="temp !== null">
-            <span class="flex items-center gap-1">
-                <span x-text="wIcon"></span>
-                <span x-text="temp"></span>°C <span x-text="wText"></span>
-            </span>
-        </template>
+        <!-- Météo avec plus de détails -->
+        <span
+            x-show="temp !== null"
+            class="flex items-center gap-1"
+            :title="`Météo: ${temp}°C - ${wText}`"
+        >
+            <span x-text="wIcon" aria-hidden="true"></span>
+            <span class="sr-only">Température:</span>
+            <span x-text="temp" class="font-semibold text-white"></span>°C
+            <span x-text="wText" class="text-gray-300"></span>
+        </span>
+
+        <!-- Indicateur de statut en temps réel -->
+        <span
+            class="flex items-center gap-1 text-xs"
+            title="Données mises à jour en temps réel"
+        >
+            <div
+                class="w-2 h-2 bg-green-400 rounded-full animate-pulse"
+                aria-hidden="true"
+            >
+            </div>
+            <span class="text-gray-400">Live</span>
+        </span>
+    </div>
+
+    <!-- Contrôles d'accessibilité cachés -->
+    <div class="sr-only">
+        <p>
+            Bandeau d'informations défilant. Appuyez sur Espace ou cliquez pour
+            mettre en pause.
+        </p>
     </div>
 </div>
+
+<style>
+    /* Votre animation conservée avec améliorations */
+    .ticker-track {
+        white-space: nowrap;
+        animation: ticker-scroll 40s linear infinite;
+    }
+
+    .ticker-track:hover,
+    .ticker-track.paused {
+        animation-play-state: paused;
+        cursor: pointer;
+    }
+
+    .ticker-track:focus {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+    }
+
+    .ticker-track span {
+        white-space: nowrap;
+    }
+
+    @keyframes ticker-scroll {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    /* Amélioration pour la réduction de mouvement */
+    @media (prefers-reduced-motion: reduce) {
+        .ticker-track {
+            animation-duration: 120s; /* Plus lent pour les utilisateurs sensibles au mouvement */
+        }
+    }
+
+    /* Optimisation pour les petits écrans */
+    @media (max-width: 640px) {
+        .ticker-track {
+            font-size: 14px;
+            gap: 1rem;
+        }
+    }
+
+    /* Focus amélioré pour l'accessibilité */
+    .focus-ring:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+</style>

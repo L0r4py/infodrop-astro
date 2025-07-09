@@ -1,0 +1,225 @@
+#!/usr/bin/env node
+
+/**
+ * 🔧 Script de setup automatique pour INFODROP
+ * 
+ * Ce script configure automatiquement l'environnement de développement :
+ * - Vérifie les prérequis (Node.js, npm)
+ * - Crée le fichier .env avec des valeurs par défaut
+ * - Installe les dépendances
+ * - Affiche les instructions de configuration Supabase
+ */
+
+import { execSync } from 'child_process';
+import { writeFileSync, existsSync, readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const projectRoot = join(__dirname, '..');
+
+// Couleurs pour la console
+const colors = {
+    reset: '\x1b[0m',
+    bright: '\x1b[1m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m',
+};
+
+function log(message, color = 'reset') {
+    console.log(`${colors[color]}${message}${colors.reset}`);
+}
+
+function step(number, message) {
+    log(`\n${number}. ${message}`, 'bright');
+}
+
+function success(message) {
+    log(`✅ ${message}`, 'green');
+}
+
+function warning(message) {
+    log(`⚠️  ${message}`, 'yellow');
+}
+
+function error(message) {
+    log(`❌ ${message}`, 'red');
+}
+
+function info(message) {
+    log(`ℹ️  ${message}`, 'blue');
+}
+
+async function checkPrerequisites() {
+    step(1, 'Vérification des prérequis');
+
+    try {
+        // Vérifier Node.js
+        const nodeVersion = execSync('node --version', { encoding: 'utf8' }).trim();
+        const majorVersion = parseInt(nodeVersion.replace('v', '').split('.')[0]);
+
+        if (majorVersion >= 20) {
+            success(`Node.js ${nodeVersion} ✓`);
+        } else {
+            error(`Node.js ${nodeVersion} détecté. Version 20+ requise.`);
+            process.exit(1);
+        }
+
+        // Vérifier npm
+        const npmVersion = execSync('npm --version', { encoding: 'utf8' }).trim();
+        success(`npm ${npmVersion} ✓`);
+
+    } catch (err) {
+        error('Node.js ou npm non trouvé. Veuillez les installer d\'abord.');
+        info('Téléchargez Node.js sur : https://nodejs.org/');
+        process.exit(1);
+    }
+}
+
+function createEnvFile() {
+    step(2, 'Configuration du fichier .env');
+
+    const envPath = join(projectRoot, '.env');
+
+    if (existsSync(envPath)) {
+        warning('Le fichier .env existe déjà. Sauvegarde en .env.backup');
+        const backup = readFileSync(envPath, 'utf8');
+        writeFileSync(join(projectRoot, '.env.backup'), backup);
+    }
+
+    const envTemplate = `# ================================================================
+# 🔐 CONFIGURATION INFODROP v4.0.0-beta
+# ================================================================
+
+# === SUPABASE (OBLIGATOIRE) ===
+# Récupérez ces valeurs depuis votre dashboard Supabase
+SUPABASE_URL=https://votre-projet.supabase.co
+SUPABASE_ANON_KEY=votre_clé_publique_supabase
+SUPABASE_SERVICE_KEY=votre_clé_service_supabase
+
+# === ADMINISTRATION ===
+# Emails des administrateurs (séparés par des virgules)
+ADMIN_EMAILS=admin@example.com
+
+# === PAIEMENTS (OPTIONNEL) ===
+# Lien Stripe pour les dons
+STRIPE_LINK=https://buy.stripe.com/votre_lien_stripe
+
+# === CRON JOBS (OPTIONNEL) ===
+# Secret pour sécuriser les scripts automatisés
+CRON_SECRET=\${Date.now()}-\${Math.random().toString(36).substring(2)}
+
+# ================================================================
+# 📝 INSTRUCTIONS :
+# 1. Remplacez les valeurs par vos vraies clés Supabase
+# 2. Modifiez ADMIN_EMAILS avec votre email
+# 3. Sauvegardez ce fichier
+# 4. Lancez : npm run dev
+# ================================================================
+`;
+
+    writeFileSync(envPath, envTemplate);
+    success('Fichier .env créé avec des valeurs par défaut');
+    warning('⚠️  IMPORTANT : Modifiez le fichier .env avec vos vraies clés !');
+}
+
+function installDependencies() {
+    step(3, 'Installation des dépendances');
+
+    try {
+        info('Installation en cours... (cela peut prendre quelques minutes)');
+        execSync('npm install', {
+            stdio: 'pipe',
+            cwd: projectRoot
+        });
+        success('Dépendances installées avec succès');
+    } catch (err) {
+        error('Erreur lors de l\'installation des dépendances');
+        console.log(err.stdout?.toString());
+        console.error(err.stderr?.toString());
+        process.exit(1);
+    }
+}
+
+function showSupabaseInstructions() {
+    step(4, 'Configuration Supabase requise');
+
+    log('\n📋 ÉTAPES À SUIVRE DANS SUPABASE :', 'cyan');
+    log('');
+    log('1. Créez un nouveau projet sur https://supabase.com', 'bright');
+    log('2. Récupérez l\'URL du projet et la clé publique dans Settings > API');
+    log('3. Créez une clé de service dans Settings > API > Service Role');
+    log('4. Exécutez les requêtes SQL suivantes dans l\'éditeur SQL :');
+    log('');
+    log('   -- Table des actualités', 'yellow');
+    log('   CREATE TABLE actu (', 'yellow');
+    log('     id BIGSERIAL PRIMARY KEY,', 'yellow');
+    log('     resume TEXT NOT NULL,', 'yellow');
+    log('     url TEXT UNIQUE NOT NULL,', 'yellow');
+    log('     heure TIMESTAMPTZ DEFAULT NOW(),', 'yellow');
+    log('     source TEXT NOT NULL,', 'yellow');
+    log('     orientation TEXT,', 'yellow');
+    log('     tags TEXT[],', 'yellow');
+    log('     added_by TEXT', 'yellow');
+    log('   );', 'yellow');
+    log('');
+    log('   -- Table des codes d\'invitation', 'yellow');
+    log('   CREATE TABLE invitation_codes (', 'yellow');
+    log('     id BIGSERIAL PRIMARY KEY,', 'yellow');
+    log('     code TEXT UNIQUE NOT NULL,', 'yellow');
+    log('     owner_email TEXT,', 'yellow');
+    log('     used_by_email TEXT,', 'yellow');
+    log('     is_used BOOLEAN DEFAULT FALSE,', 'yellow');
+    log('     created_at TIMESTAMPTZ DEFAULT NOW()', 'yellow');
+    log('   );', 'yellow');
+    log('');
+    log('5. Activez Row Level Security et configurez les politiques');
+    log('6. Configurez l\'authentification (Magic Links)');
+    log('');
+    info('📖 Instructions complètes dans README.md');
+}
+
+function showNextSteps() {
+    step(5, 'Prochaines étapes');
+
+    log('\n🚀 VOTRE PROJET EST PRÊT !', 'green');
+    log('');
+    log('Pour continuer :', 'bright');
+    log('1. Éditez le fichier .env avec vos clés Supabase', 'cyan');
+    log('2. Configurez votre base de données Supabase (voir instructions ci-dessus)', 'cyan');
+    log('3. Lancez le serveur de développement :', 'cyan');
+    log('   npm run dev', 'yellow');
+    log('');
+    log('4. Ouvrez http://localhost:4321 dans votre navigateur', 'cyan');
+    log('');
+    log('📚 Documentation complète : README.md', 'blue');
+    log('🐛 Support : https://github.com/votre-org/infodrop-astro/issues', 'blue');
+    log('🐦 Twitter : @LOR4_14', 'blue');
+    log('');
+    success('Setup terminé ! Bon développement ! 🎉');
+}
+
+async function main() {
+    log('🔧 INFODROP v4.0.0-beta - Script de setup automatique', 'magenta');
+    log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'magenta');
+
+    try {
+        await checkPrerequisites();
+        createEnvFile();
+        installDependencies();
+        showSupabaseInstructions();
+        showNextSteps();
+    } catch (err) {
+        error('Erreur durant le setup :');
+        console.error(err);
+        process.exit(1);
+    }
+}
+
+// Lancer le script
+main().catch(console.error);

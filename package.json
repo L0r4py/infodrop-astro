@@ -1,16 +1,72 @@
 {
   "name": "infodrop-astro",
   "type": "module",
-  "version": "0.0.1",
+  "version": "4.0.0-beta",
+  "description": "Le Club privé de l'actu centralisée - Version Astro",
+  "keywords": [
+    "news",
+    "astro",
+    "supabase",
+    "tailwind",
+    "alpine",
+    "pwa"
+  ],
+  "homepage": "https://infodrop.live",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/votre-org/infodrop-astro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/votre-org/infodrop-astro/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "INFODROP Team",
+    "email": "contact@infodrop.live"
+  },
   "scripts": {
     "dev": "astro dev",
+    "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "setup": "node scripts/setup.js",
+    "check": "astro check",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.astro",
+    "format": "prettier --write src",
+    "clean": "rm -rf dist .astro"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.11",
+    "@astrojs/tailwind": "^5.1.1",
+    "@astrojs/node": "^8.3.4",
+    "@supabase/supabase-js": "^2.39.0",
     "astro": "^5.11.0",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^0.31.0",
+    "prettier": "^3.2.0",
+    "prettier-plugin-astro": "^0.13.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "not op_mini all"
+  ],
+  "peerDependencies": {
+    "sharp": "^0.32.0"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.32.0"
   }
 }

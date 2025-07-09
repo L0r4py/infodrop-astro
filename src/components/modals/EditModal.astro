@@ -1,0 +1,251 @@
+---
+// src/components/modals/EditModal.astro
+// Modal pour éditer un article (admin seulement)
+---
+
+<div
+    x-show="showEditPanel"
+    x-transition:enter="ease-out duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:leave="ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+    style="display: none;"
+>
+    <div
+        @click.away="showEditPanel = false"
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg border border-gray-700 max-h-[90vh] overflow-y-auto"
+    >
+        <!-- === HEADER === -->
+        <div
+            class="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 rounded-t-xl"
+        >
+            <div class="flex items-center justify-between">
+                <h3
+                    class="text-xl font-bold text-white flex items-center gap-2"
+                >
+                    ✏️ Éditer l'actualité
+                </h3>
+                <button
+                    @click="showEditPanel = false"
+                    class="p-2 hover:bg-gray-700 rounded-lg transition focus-ring"
+                >
+                    <svg
+                        class="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- === FORMULAIRE === -->
+        <form @submit.prevent="updateNews()" class="p-6 space-y-4">
+            <!-- === RÉSUMÉ === -->
+            <div>
+                <label class="form-label">Résumé de l'actualité</label>
+                <textarea
+                    x-model="editingNews.resume"
+                    rows="3"
+                    maxlength="200"
+                    required
+                    class="form-input resize-none"
+                    placeholder="Résumé concis de l'actualité..."></textarea>
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>Décrit brièvement l'actualité</span>
+                    <span>
+                        <span x-text="editingNews.resume.length"></span>/200
+                    </span>
+                </div>
+            </div>
+
+            <!-- === SOURCE === -->
+            <div>
+                <label class="form-label">Source</label>
+                <input
+                    x-model="editingNews.source"
+                    type="text"
+                    required
+                    class="form-input"
+                    placeholder="ex: Le Monde, BFM TV, Reuters..."
+                />
+                <p class="text-xs text-gray-500 mt-1">
+                    Nom du média ou de la source
+                </p>
+            </div>
+
+            <!-- === URL === -->
+            <div>
+                <label class="form-label">URL de l'article</label>
+                <input
+                    x-model="editingNews.url"
+                    type="url"
+                    required
+                    class="form-input"
+                    placeholder="https://exemple.com/article"
+                />
+                <p class="text-xs text-gray-500 mt-1">
+                    Lien vers l'article complet
+                </p>
+            </div>
+
+            <!-- === ORIENTATION POLITIQUE === -->
+            <div>
+                <label class="form-label">Orientation politique</label>
+                <select x-model="editingNews.orientation" class="form-select">
+                    <option value="">Non définie</option>
+                    <option value="extrême-gauche">Extrême gauche</option>
+                    <option value="gauche">Gauche</option>
+                    <option value="centre-gauche">Centre gauche</option>
+                    <option value="centre">Centre</option>
+                    <option value="centre-droit">Centre droit</option>
+                    <option value="droite">Droite</option>
+                    <option value="extrême-droite">Extrême droite</option>
+                    <option value="gouvernement">Gouvernement</option>
+                    <option value="neutre">Neutre</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">
+                    Orientation politique générale de la source
+                </p>
+            </div>
+
+            <!-- === TAGS === -->
+            <div>
+                <label class="form-label">Tags et catégories</label>
+                <input
+                    x-model="editingNews.tagsText"
+                    type="text"
+                    class="form-input"
+                    placeholder="ex: national, économie, europe, tech"
+                />
+                <p class="text-xs text-gray-500 mt-1">
+                    Mots-clés séparés par des virgules pour catégoriser
+                    l'article
+                </p>
+
+                <!-- Aperçu des tags -->
+                <div x-show="editingNews.tagsText" class="mt-2">
+                    <p class="text-xs text-gray-400 mb-1">Aperçu :</p>
+                    <div class="flex flex-wrap gap-1">
+                        <template
+                            x-for="tag in editingNews.tagsText.split(',').map(t => t.trim()).filter(Boolean)"
+                            :key="tag"
+                        >
+                            <span
+                                class="badge badge-secondary text-xs"
+                                x-text="tag"></span>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === MÉTADONNÉES (LECTURE SEULE) === -->
+            <div class="p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                <h4 class="text-sm font-medium text-gray-300 mb-2">
+                    Informations
+                </h4>
+                <div class="space-y-1 text-xs text-gray-500">
+                    <p>
+                        <strong>ID :</strong>
+                        <code x-text="editingNews.id"></code>
+                    </p>
+                    <p x-show="editingNews.added_by">
+                        <strong>Ajouté par :</strong>
+                        <span x-text="editingNews.added_by"></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- === ACTIONS === -->
+            <div class="flex justify-end gap-3 pt-4 border-t border-gray-700">
+                <button
+                    type="button"
+                    @click="showEditPanel = false"
+                    class="btn-secondary"
+                >
+                    Annuler
+                </button>
+
+                <button type="submit" class="btn-primary">
+                    💾 Enregistrer les modifications
+                </button>
+            </div>
+        </form>
+
+        <!-- === RACCOURCIS CLAVIER === -->
+        <div class="px-6 pb-4 text-xs text-gray-500">
+            <p>
+                <kbd class="px-1 py-0.5 bg-gray-700 rounded text-xs">Échap</kbd>
+                pour fermer • <kbd
+                    class="px-1 py-0.5 bg-gray-700 rounded text-xs">Ctrl+S</kbd
+                > pour sauvegarder
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- === GESTION DES RACCOURCIS CLAVIER === -->
+<script>
+    document.addEventListener(
+        "keydown",
+        function (e: KeyboardEvent) {
+            // Récupère la racine Alpine (remplacez '#app' par l'id de votre racine Alpine si besoin)
+            const root = document.querySelector('[x-data]');
+            if (!root) return;
+            const alpine = (window as any).Alpine;
+            if (!alpine) return;
+            const state = alpine.$data(root);
+
+            // Échap pour fermer le modal
+            if (e.key === "Escape" && state.showEditPanel) {
+                state.showEditPanel = false;
+            }
+
+            // Ctrl+S pour sauvegarder (empêche la sauvegarde du navigateur)
+            if (e.ctrlKey && e.key === "s" && state.showEditPanel) {
+                e.preventDefault();
+                state.updateNews();
+            }
+        }
+    );
+</script>
+
+<style>
+    /* Styles pour les kbd */
+    kbd {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas,
+            "Liberation Mono", "Courier New", monospace;
+    }
+
+    /* Amélioration du focus sur les éléments du modal */
+    .form-input:focus,
+    .form-select:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Animation personnalisée pour le modal */
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+</style>

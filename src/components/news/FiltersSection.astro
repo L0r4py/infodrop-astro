@@ -1,0 +1,219 @@
+---
+// src/components/news/FiltersSection.astro
+// Section des filtres pour les actualités
+---
+
+<div
+    x-show="!loadingNews"
+    x-transition
+    class="bg-gray-800/50 border border-gray-700 rounded-lg mb-6"
+>
+    <!-- === HEADER PLIABLE === -->
+    <button
+        @click="showFilters = !showFilters"
+        class="w-full flex items-center justify-between py-3 px-4 hover:bg-gray-800/30 transition"
+    >
+        <div class="flex items-center gap-2">
+            <h3 class="text-sm font-medium text-gray-300">
+                🔍 Filtrer les actualités
+            </h3>
+            <!-- Badge du filtre actif -->
+            <div
+                x-show="activeFilter !== 'all'"
+                class="badge badge-primary text-xs"
+                x-text="activeFilter"
+            >
+            </div>
+        </div>
+
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 transition-transform"
+            :class="{ 'rotate-180': showFilters }"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+        >
+            <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"></path>
+        </svg>
+    </button>
+
+    <!-- === CONTENU DES FILTRES === -->
+    <div
+        x-show="showFilters"
+        x-transition
+        class="p-4 border-t border-gray-700 space-y-4"
+    >
+        <!-- === BOUTON TOUT VOIR === -->
+        <div class="mb-4">
+            <button
+                @click="toggleFilter('all')"
+                :class="{ 'bg-blue-600 text-white': activeFilter === 'all', 'bg-gray-700 text-gray-300 hover:bg-gray-600': activeFilter !== 'all' }"
+                class="px-3 py-1.5 rounded-lg text-sm font-medium transition"
+            >
+                🌐 Tout voir
+            </button>
+            <p class="text-xs text-gray-500 mt-1">
+                Afficher toutes les actualités sans filtre
+            </p>
+        </div>
+
+        <!-- === CARTE ORIENTATIONS POLITIQUES === -->
+        <div class="card">
+            <div class="card-header">
+                <h4
+                    class="text-sm font-semibold text-white flex items-center gap-2"
+                >
+                    🗳️ Orientations politiques
+                    <span class="text-xs text-gray-500">
+                        (<span x-text="activeOrientations.length"></span> actives)
+                    </span>
+                </h4>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                <template
+                    x-for="orientation in allOrientations"
+                    :key="orientation"
+                >
+                    <button
+                        @click="toggleFilter(orientation)"
+                        :disabled="!hasArticlesForOrientation(orientation)"
+                        :class="[
+                            orientation === '🧨INFODROP' ? 
+                                (activeFilter === orientation ? 'bg-gray-600 text-white border-2 border-white font-black' : 
+                                 hasArticlesForOrientation(orientation) ? 'bg-gray-700 text-white border border-gray-400 hover:bg-gray-600 font-black' : 
+                                 'bg-gray-800 text-gray-500 border border-gray-600 font-black') :
+                                (activeFilter === orientation ? getOrientationClass(orientation) + ' ring-2 ring-white' : 
+                                 hasArticlesForOrientation(orientation) ? 'bg-gray-700 text-gray-300 hover:opacity-80 border border-gray-600' : 
+                                 'bg-gray-800 text-gray-500 border border-gray-600')
+                        ]"
+                        class="px-3 py-2 rounded-lg text-xs font-medium transition disabled:cursor-not-allowed text-center"
+                        :title="hasArticlesForOrientation(orientation) ? `Filtrer par ${getOrientationDisplayName(orientation)}` : 'Aucun article ces dernières 24h'"
+                    >
+                        <div class="flex flex-col items-center gap-1">
+                            <span
+                                x-text="getOrientationDisplayName(orientation)"
+                            ></span>
+                            <span
+                                x-show="hasArticlesForOrientation(orientation)"
+                                class="text-xs opacity-70"
+                            >
+                                ✓
+                            </span>
+                            <span
+                                x-show="!hasArticlesForOrientation(orientation)"
+                                class="text-xs opacity-50"
+                            >
+                                ○
+                            </span>
+                        </div>
+                    </button>
+                </template>
+            </div>
+
+            <!-- === BOÎTE D'INFO ORIENTATIONS === -->
+            <div class="alert alert-info">
+                <p class="text-xs flex items-start gap-1">
+                    <span class="text-sm">💡</span>
+                    <span>
+                        Les orientations avec ○ n'ont pas publié ces dernières
+                        24h. Le score reflète l'orientation politique générale
+                        de la source.
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <!-- === CARTE CATÉGORIES === -->
+        <div x-show="allOtherTags.length > 0" class="card">
+            <div class="card-header">
+                <h4
+                    class="text-sm font-semibold text-white flex items-center gap-2"
+                >
+                    🏷️ Catégories et sujets
+                    <span class="text-xs text-gray-500">
+                        (<span x-text="allOtherTags.length"></span> disponibles)
+                    </span>
+                </h4>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+                <template x-for="tag in allOtherTags" :key="tag">
+                    <button
+                        @click="toggleFilter(tag)"
+                        :disabled="!hasArticlesForTag(tag)"
+                        :class="activeFilter === tag ? 'bg-blue-600 text-white ring-2 ring-blue-300' : (hasArticlesForTag(tag) ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600' : 'bg-gray-800 text-gray-500 border border-gray-600')"
+                        class="px-2 py-1 rounded-full text-xs font-medium transition capitalize disabled:cursor-not-allowed"
+                        :title="hasArticlesForTag(tag) ? `Filtrer par ${tag}` : 'Aucun article ces dernières 24h'"
+                    >
+                        <span x-text="tag"></span>
+                        <span x-show="hasArticlesForTag(tag)" class="ml-1"
+                            >✓</span
+                        >
+                        <span
+                            x-show="!hasArticlesForTag(tag)"
+                            class="ml-1 opacity-50">○</span
+                        >
+                    </button>
+                </template>
+            </div>
+
+            <!-- === MESSAGE SI PAS DE CATÉGORIES === -->
+            <div
+                x-show="allOtherTags.length === 0"
+                class="text-center py-4 text-gray-500 text-xs"
+            >
+                <p>
+                    Aucune catégorie spécifique détectée dans les actualités du
+                    moment
+                </p>
+            </div>
+        </div>
+
+        <!-- === RACCOURCIS RAPIDES === -->
+        <div class="card">
+            <div class="card-header">
+                <h4
+                    class="text-sm font-semibold text-white flex items-center gap-2"
+                >
+                    ⚡ Raccourcis rapides
+                </h4>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button
+                    @click="toggleFilter('🧨INFODROP')"
+                    :class="activeFilter === '🧨INFODROP' ? 'bg-gray-600 text-white border-2 border-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
+                    class="px-3 py-2 rounded-lg text-xs font-black transition text-center"
+                >
+                    🧨 INFODROP uniquement
+                </button>
+
+                <button
+                    @click="toggleFilter('neutre')"
+                    :class="activeFilter === 'neutre' ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
+                    class="px-3 py-2 rounded-lg text-xs font-medium transition text-center"
+                >
+                    🌿 Sources neutres
+                </button>
+            </div>
+        </div>
+
+        <!-- === STATS DU FILTRE ACTUEL === -->
+        <div
+            x-show="activeFilter !== 'all'"
+            class="p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg"
+        >
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-blue-300">
+                    📊 Articles affichés avec ce filtre :
+                </span>
+                <span class="font-bold text-white" x-text="newsList.length"
+                ></span>
+            </div>
+        </div>
+    </div>
+</div>

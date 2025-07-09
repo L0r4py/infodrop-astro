@@ -1,0 +1,36 @@
+---
+// src/components/stats/StatsBar.astro
+// Barre des statistiques globales de la plateforme
+---
+
+<div class="flex flex-col gap-2 mb-4">
+    <div
+        class="flex items-center justify-between bg-gray-800/50 rounded-lg px-3 py-2 border-l-4 border-blue-400"
+    >
+        <span class="text-blue-300 text-xs"
+            >📰 Articles publiés ces 24 dernières heures</span
+        >
+        <span class="font-bold text-white" x-text="stats.total_articles">0</span
+        >
+    </div>
+
+    <div
+        class="flex items-center justify-between bg-gray-800/50 rounded-lg px-3 py-2 border-l-4 border-green-400"
+    >
+        <span class="text-green-300 text-xs"
+            >📊 Sources de médias francophones actives</span
+        >
+        <span class="font-bold text-white" x-text="stats.total_sources">0</span>
+    </div>
+
+    <div
+        class="flex items-center justify-between bg-gray-800/50 rounded-lg px-3 py-2 border-l-4 border-purple-400"
+    >
+        <span class="text-purple-300 text-xs"
+            >👥 Membres du club connectés maintenant</span
+        >
+        <span class="font-bold text-white" x-text="connectedUsers + socialBoost"
+            >1</span
+        >
+    </div>
+</div>

@@ -9,47 +9,78 @@
 const DEBUG = true;
 const dlog = (...args) => DEBUG && console.log('[DEBUG]', ...args);
 
-/* ───── Variables globales ───── */
-let supabase = null;
-let ADMIN_EMAILS = [];
-let STRIPE_LINK = '';
+/* ───── Variables globales (exportées) ───── */
+window.supabase = null;
+window.ADMIN_EMAILS = [];
+window.STRIPE_LINK = '';
 
 /* ──────────────────────────────────────────────────────────────────────
    initializeSupabase  —  appel unique au chargement
    ─────────────────────────────────────────────────────────────────── */
-async function initializeSupabase() {
+window.initializeSupabase = async function initializeSupabase() {
     dlog('🔐 initializeSupabase() lancé');
+
     try {
-        const res = await fetch('/api/config');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const cfg = await res.json();
+        console.log('🔐 Récupération de la configuration sécurisée...');
 
-        ADMIN_EMAILS = cfg.adminEmails;
-        STRIPE_LINK = cfg.stripeLink;
-        dlog('⚙️  Config récupérée', cfg);
+        // Récupérer TOUTE la configuration depuis l'API sécurisée
+        const response = await fetch('/api/config');
 
-        /* Import ESM du SDK supabase-js v2 */
-        const { createClient } = await import(
-            'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-        );
+        if (!response.ok) {
+            throw new Error(`Erreur API: ${response.status}`);
+        }
 
-        supabase = createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-        dlog('✅ Supabase initialisé');
-    } catch (err) {
-        dlog('❌ initializeSupabase erreur', err);
+        const config = await response.json();
+
+        // Vérifier que toutes les données sont présentes
+        if (!config.supabaseUrl || !config.supabaseAnonKey) {
+            throw new Error('Configuration Supabase incomplète');
+        }
+
+        // Import dynamique du SDK Supabase v2
+        dlog('📦 Import du SDK Supabase...');
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+
+        // Initialiser Supabase avec les clés récupérées
+        window.supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
+
+        // Mettre à jour TOUTES les constantes sécurisées
+        window.ADMIN_EMAILS = config.adminEmails || [];
+        window.STRIPE_LINK = config.stripeLink || '';
+
+        console.log('✅ Configuration complète initialisée de manière sécurisée');
+        console.log('📧 Admin emails récupérés:', window.ADMIN_EMAILS.length + ' email(s)');
+        console.log('💳 Stripe link récupéré: ✓');
+
+        return true;
+
+    } catch (error) {
+        console.error('❌ Erreur initialisation:', error);
+
+        // Affichage d'erreur utilisateur plus informatif
+        const errorDiv = document.createElement('div');
+        errorDiv.innerHTML = `
+            <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); color: white; display: flex; align-items: center; justify-content: center; z-index: 9999; font-family: Arial;">
+                <div style="text-align: center; padding: 2rem;">
+                    <h2>❌ Erreur de configuration</h2>
+                    <p>Impossible de charger la configuration sécurisée.</p>
+                    <p>Veuillez contacter l'administrateur.</p>
+                    <button onclick="window.location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #3B82F6; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Recharger la page
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(errorDiv);
+
+        return false;
     }
-}
-window.initializeSupabase = initializeSupabase;
-
-/* ------------------------------------------------------------------
-   main.js – logique globale (Alpine JS)
-   ▸ Supabase init déjà plus haut
-   ▸ initTicker(scope) remplit date, météo, lune, crypto…
------------------------------------------------------------------- */
+};
 
 /* === LOG UTILS ================================================== */
 const D = (msg, ...rest) => console.debug('[DEBUG]', msg, ...rest);
 
+/* === CRYPTO (CoinGecko) ========================================= */
 async function loadCrypto(scope) {
     try {
         const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd';
@@ -64,8 +95,6 @@ async function loadCrypto(scope) {
     }
     setTimeout(() => loadCrypto(scope), 14_400_000);   // 4 h
 }
-
-
 
 /* === MÉTÉO (Open-Meteo) ========================================== */
 async function fetchWeather(scope) {
@@ -105,7 +134,7 @@ async function fetchWeather(scope) {
 
         scope.temp = current.temperature_2m.toFixed(0);
         [scope.wIcon, scope.wText] = arr[idx].split(' ');
-        scope.wIcon += '';                       // garde l’emoji
+        scope.wIcon += '';                       // garde l'emoji
         scope.wText = arr[idx].split(' ').slice(1).join(' ');
 
         D('🌤️  Météo reçue', current);

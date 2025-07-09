@@ -1,0 +1,207 @@
+---
+// src/components/stats/DiversityChecker.astro
+// Composant pour le score de diversité des lectures
+---
+
+<div
+    x-show="!loadingNews && diversityScore !== null"
+    x-transition
+    class="bg-gray-800/50 border border-gray-700 rounded-lg mb-6"
+>
+    <!-- === HEADER PLIABLE === -->
+    <button
+        @click="showDiversityChecker = !showDiversityChecker"
+        class="w-full flex items-center justify-between py-3 px-4 hover:bg-gray-800/30 transition"
+    >
+        <div class="flex items-center gap-2">
+            <h3 class="text-sm font-medium text-gray-300">
+                🌈 Score de diversité
+            </h3>
+            <!-- Badge du score -->
+            <div
+                x-show="diversityScore !== null"
+                class="badge text-xs font-bold"
+                :class="{
+                    'badge-error': diversityScore < 30,
+                    'badge-warning': diversityScore >= 30 && diversityScore < 70,
+                    'badge-success': diversityScore >= 70
+                }"
+                x-text="diversityScore + '%'"
+            >
+            </div>
+        </div>
+
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 transition-transform"
+            :class="{ 'rotate-180': showDiversityChecker }"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+        >
+            <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"></path>
+        </svg>
+    </button>
+
+    <!-- === CONTENU DU DIVERSITY CHECKER === -->
+    <div
+        x-show="showDiversityChecker"
+        x-transition
+        class="p-4 border-t border-gray-700"
+    >
+        <!-- === CARTE ARTICLES LUS === -->
+        <div
+            x-show="totalReadCount > 0"
+            class="bg-gray-900/50 border border-gray-600 rounded-lg mb-4"
+        >
+            <div class="py-2 px-3 text-center">
+                <div class="flex items-center justify-center gap-2 text-sm">
+                    <span class="text-blue-400">📚</span>
+                    <span
+                        class="font-semibold text-white"
+                        x-text="totalReadCount"></span>
+                    <span
+                        class="text-gray-300"
+                        x-text="totalReadCount === 1 ? 'article lu' : 'articles lus'"
+                    ></span>
+                    <span class="text-gray-500 text-xs">ces 24h</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- === HEADER AVEC SCORE ET MESSAGE === -->
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <p class="text-xs text-gray-500">
+                    Basé sur vos dernières lectures
+                </p>
+                <p
+                    class="text-xs text-blue-400 mt-1"
+                    x-text="getDiversityTip()"
+                >
+                </p>
+            </div>
+            <div class="text-right">
+                <div
+                    class="text-3xl font-bold mb-1"
+                    :class="{
+                     'text-red-400': diversityScore < 30,
+                     'text-yellow-400': diversityScore >= 30 && diversityScore < 70,
+                     'text-green-400': diversityScore >= 70
+                 }"
+                    x-text="diversityScore + '%'"
+                >
+                </div>
+                <p
+                    class="text-xs font-medium"
+                    :class="{
+                   'text-red-400': diversityScore < 30,
+                   'text-yellow-400': diversityScore >= 30 && diversityScore < 70,
+                   'text-green-400': diversityScore >= 70
+               }"
+                    x-text="getDiversityMessage()"
+                >
+                </p>
+            </div>
+        </div>
+
+        <!-- === BARRE DE PROGRESSION === -->
+        <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden mb-4">
+            <div
+                class="h-full rounded-full transition-all duration-1000 relative"
+                :class="{
+                 'bg-gradient-to-r from-red-500 to-red-400': diversityScore < 30,
+                 'bg-gradient-to-r from-yellow-500 to-yellow-400': diversityScore >= 30 && diversityScore < 70,
+                 'bg-gradient-to-r from-green-500 to-green-400': diversityScore >= 70
+             }"
+                :style="`width: ${diversityScore}%`"
+            >
+                <!-- Effet brillant -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"
+                >
+                </div>
+            </div>
+        </div>
+
+        <!-- === ORIENTATIONS LUES === -->
+        <div x-show="readOrientations.length > 0" class="mb-4">
+            <h4 class="text-xs font-medium text-gray-400 mb-2">
+                📊 Orientations consultées :
+            </h4>
+            <div class="flex flex-wrap gap-2">
+                <template
+                    x-for="orientation in readOrientations"
+                    :key="orientation"
+                >
+                    <span
+                        class="text-xs px-2 py-1 rounded-full border"
+                        :class="getOrientationClass(orientation)"
+                    >
+                        <span x-text="getOrientationDisplayName(orientation)"
+                        ></span>
+                    </span>
+                </template>
+            </div>
+        </div>
+
+        <!-- === ENCOURAGEMENTS ET CONSEILS === -->
+        <div
+            class="p-3 rounded-lg"
+            :class="{
+            'bg-red-900/20 border border-red-700/30': diversityScore < 30,
+            'bg-yellow-900/20 border border-yellow-700/30': diversityScore >= 30 && diversityScore < 70,
+            'bg-green-900/20 border border-green-700/30': diversityScore >= 70
+        }"
+        >
+            <div class="flex items-start gap-2">
+                <span
+                    class="text-lg"
+                    x-text="diversityScore >= 70 ? '🏆' : (diversityScore >= 30 ? '💪' : '🎯')"
+                ></span>
+                <div class="text-xs">
+                    <p x-show="diversityScore < 30" class="text-red-300">
+                        <strong>Bulle de filtre détectée !</strong> Essayez de lire
+                        des sources aux orientations différentes pour élargir votre
+                        perspective.
+                    </p>
+                    <p
+                        x-show="diversityScore >= 30 && diversityScore < 70"
+                        class="text-yellow-300"
+                    >
+                        <strong>Bon début !</strong> Continuez à diversifier vos
+                        lectures pour avoir une vue d'ensemble plus complète.
+                    </p>
+                    <p x-show="diversityScore >= 70" class="text-green-300">
+                        <strong>Excellent !</strong> Vous lisez de manière équilibrée.
+                        C'est la clé d'une information de qualité.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- === MÉTHODOLOGIE === -->
+        <details class="mt-3">
+            <summary
+                class="text-xs text-gray-500 cursor-pointer hover:text-gray-400 transition"
+            >
+                ℹ️ Comment est calculé ce score ?
+            </summary>
+            <div class="text-xs text-gray-500 mt-2 p-2 bg-gray-900/30 rounded">
+                <p>
+                    <strong>Diversité politique (50%) :</strong> Nombre d'orientations
+                    différentes lues / 9 orientations possibles
+                </p>
+                <p>
+                    <strong>Diversité des sources (50%) :</strong> Nombre de sources
+                    différentes consultées (plafonné à 5+)
+                </p>
+                <p class="mt-1 text-gray-600">
+                    Calculé sur vos lectures des dernières 24 heures uniquement.
+                </p>
+            </div>
+        </details>
+    </div>
+</div>

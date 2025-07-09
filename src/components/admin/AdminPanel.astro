@@ -1,0 +1,174 @@
+---
+// src/components/admin/AdminPanel.astro
+// Panneau d'administration pour les admins
+---
+
+<div
+    x-show="showAdminPanel && isAdmin"
+    x-transition
+    class="bg-gray-950/50 border-b border-gray-800"
+>
+    <div class="max-w-4xl mx-auto p-4">
+        <h2 class="text-sm font-medium text-white mb-3 flex items-center gap-2">
+            🧨 Ajouter une actualité
+        </h2>
+
+        <!-- === FORMULAIRE D'AJOUT D'ACTUALITÉ === -->
+        <form @submit.prevent="addManualNews()" class="grid grid-cols-1 gap-2">
+            <!-- Résumé -->
+            <div>
+                <input
+                    x-model="newNews.resume"
+                    type="text"
+                    placeholder="Résumé de l'actualité"
+                    maxlength="180"
+                    required
+                    class="form-input text-sm"
+                    :disabled="addingNews"
+                />
+                <div class="text-xs text-gray-500 mt-1">
+                    <span x-text="newNews.resume.length"></span>/180 caractères
+                </div>
+            </div>
+
+            <!-- URL -->
+            <div>
+                <input
+                    x-model="newNews.url"
+                    type="url"
+                    placeholder="https://exemple.com/article"
+                    required
+                    class="form-input text-sm"
+                    :disabled="addingNews"
+                />
+            </div>
+
+            <!-- Orientation politique -->
+            <div>
+                <select
+                    x-model="newNews.orientation"
+                    class="form-select text-sm"
+                    :disabled="addingNews"
+                >
+                    <option value="">Orientation (optionnelle)</option>
+                    <option value="extrême-gauche">Extrême gauche</option>
+                    <option value="gauche">Gauche</option>
+                    <option value="centre-gauche">Centre gauche</option>
+                    <option value="centre">Centre</option>
+                    <option value="centre-droit">Centre droit</option>
+                    <option value="droite">Droite</option>
+                    <option value="extrême-droite">Extrême droite</option>
+                    <option value="gouvernement">Gouvernement</option>
+                    <option value="neutre">Neutre</option>
+                </select>
+            </div>
+
+            <!-- Tags -->
+            <div>
+                <input
+                    x-model="newNews.tagsText"
+                    type="text"
+                    placeholder="ex: national, économie, europe"
+                    class="form-input text-sm"
+                    :disabled="addingNews"
+                />
+                <div class="text-xs text-gray-500 mt-1">
+                    Tags séparés par des virgules (🧨INFODROP sera ajouté
+                    automatiquement)
+                </div>
+            </div>
+
+            <!-- Bouton de soumission -->
+            <div class="flex items-center gap-3">
+                <button
+                    type="submit"
+                    :disabled="addingNews || !newNews.resume.trim() || !newNews.url.trim()"
+                    class="bg-red-600 text-white px-3 py-1.5 rounded hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                    <span x-show="!addingNews" class="flex items-center gap-1">
+                        <span>📝</span>
+                        Publier
+                    </span>
+                    <span x-show="addingNews" class="flex items-center gap-2">
+                        <div class="spinner"></div>
+                        Publication...
+                    </span>
+                </button>
+
+                <!-- Compteur de caractères en temps réel -->
+                <div
+                    class="text-xs text-gray-500"
+                    x-show="newNews.resume.length > 150"
+                >
+                    <span
+                        :class="newNews.resume.length > 180 ? 'text-red-400' : 'text-yellow-400'"
+                    >
+                        Attention : <span x-text="newNews.resume.length"
+                        ></span>/180
+                    </span>
+                </div>
+            </div>
+        </form>
+
+        <!-- === SECTION GÉNÉRATION DE CODES D'INVITATION === -->
+        <div class="border-t border-gray-700 pt-4 mt-4">
+            <h3
+                class="text-sm font-medium text-white mb-3 flex items-center gap-2"
+            >
+                🎁 Codes d'invitation
+            </h3>
+
+            <div class="flex items-center gap-3 flex-wrap">
+                <button
+                    type="button"
+                    @click="generateInviteCode()"
+                    class="bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition text-sm flex items-center gap-2 font-medium"
+                >
+                    <span>🎫</span>
+                    Générer un code
+                </button>
+
+                <!-- Affichage du dernier code généré -->
+                <div
+                    x-show="lastGeneratedCode"
+                    x-transition
+                    class="flex items-center gap-2"
+                >
+                    <span class="text-xs text-gray-400">Dernier code :</span>
+                    <span
+                        class="font-mono bg-gray-700 text-white px-2 py-1 rounded text-xs border border-gray-600"
+                    >
+                        <span x-text="lastGeneratedCode"></span>
+                    </span>
+                    <span class="text-green-400 text-xs"
+                        >✅ Copié dans le presse-papier</span
+                    >
+                </div>
+            </div>
+
+            <!-- Info sur les codes -->
+            <div
+                class="mt-2 p-2 bg-blue-900/20 border border-blue-700/30 rounded-lg"
+            >
+                <p class="text-xs text-blue-300 flex items-start gap-1">
+                    <span class="text-sm">💡</span>
+                    <span
+                        >Les codes générés permettent aux nouveaux utilisateurs
+                        de s'inscrire. Ils sont automatiquement liés à votre
+                        compte (parrainage).</span
+                    >
+                </p>
+            </div>
+        </div>
+
+        <!-- === RACCOURCI FERMETURE === -->
+        <div class="mt-4 text-center">
+            <button
+                @click="showAdminPanel = false"
+                class="text-xs text-gray-400 hover:text-white transition"
+            >
+                ↑ Fermer le panneau admin
+            </button>
+        </div>
+    </div>
+</div>

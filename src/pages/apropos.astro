@@ -1,49 +1,272 @@
 ---
-// 1. On importe le Layout commun à toutes nos pages
+/*
+ * 404.astro - Version optimisée de votre excellent original
+ * Garde votre excellente structure et design tout en améliorant l'UX
+ */
 import Layout from "../layouts/Layout.astro";
 ---
 
-<!-- 2. On utilise le Layout comme balise principale. --><!--    On en profite pour lui donner un titre de page personnalisé. -->
-<Layout title="À Propos - INFODROP">
-    <!-- 3. Ici, c'est le contenu UNIQUE à notre page "À propos". -->
-    <!--    Ce contenu sera injecté dans le <slot /> du Layout. -->
-    <div class="prose prose-invert max-w-none">
-        <h1 class="text-4xl font-bold text-white mb-4">À propos d'INFODROP</h1>
+<Layout title="404 - Page Introuvable - INFODROP" showHeaderAndTicker={false}>
+    <div
+        class="min-h-screen flex items-center justify-center p-4 bg-gray-900"
+        role="main"
+    >
+        <div
+            class="w-full max-w-lg rounded-xl bg-gray-800/50 border border-gray-700 p-8 shadow-2xl flex flex-col items-center text-center"
+        >
+            <!-- === ICÔNE D'ERREUR (votre excellente idée) === -->
+            <div
+                class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-500/10"
+            >
+                <svg
+                    class="h-8 w-8 text-yellow-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"
+                    ></path>
+                </svg>
+            </div>
 
-        <p class="text-lg">
-            INFODROP est un projet de veille informationnelle dont l'objectif
-            est de centraliser et de présenter de manière claire les actualités
-            provenant de sources multiples et d'orientations variées.
-        </p>
+            <!-- === CODE 404 STYLISÉ (votre superbe gradient) === -->
+            <p
+                class="text-7xl font-black bg-gradient-to-br from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4"
+                aria-label="Erreur 404"
+            >
+                404
+            </p>
 
-        <h2 class="text-2xl font-bold text-white mt-8 mb-3">La mission</h2>
-        <p>
-            Dans un paysage médiatique saturé, il devient difficile de se forger
-            une opinion éclairée. Notre mission est de fournir un outil
-            permettant de visualiser rapidement le spectre de l'information, de
-            comparer les traitements médiatiques et d'encourager la
-            diversification des lectures.
-        </p>
+            <!-- === TITRE === -->
+            <h1
+                class="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-4"
+            >
+                Page Introuvable
+            </h1>
 
-        <h2 class="text-2xl font-bold text-white mt-8 mb-3">La technologie</h2>
-        <p>
-            Ce projet est en cours de refactorisation vers une stack technique
-            moderne et performante :
-        </p>
-        <ul class="list-disc list-inside">
-            <li>
-                <strong>Astro</strong> pour le rendu ultra-rapide côté serveur.
-            </li>
-            <li>
-                <strong>Tailwind CSS</strong> pour un design sur-mesure et maintenable.
-            </li>
-            <li>
-                <strong>Alpine.js</strong> pour l'interactivité légère côté client.
-            </li>
-            <li>
-                <strong>Supabase</strong> comme backend pour la gestion des données
-                et l'authentification.
-            </li>
-        </ul>
+            <!-- === DESCRIPTION AMÉLIORÉE === -->
+            <p class="text-base text-gray-400 mb-6 leading-relaxed">
+                Le lien que vous avez suivi est peut-être cassé, ou la page a
+                été supprimée. Vérifiez l'URL pour toute erreur de frappe.
+            </p>
+
+            <!-- === SUGGESTIONS UTILES === -->
+            <div
+                class="mb-6 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg w-full"
+            >
+                <h2 class="text-sm font-medium text-blue-300 mb-2">
+                    💡 Suggestions :
+                </h2>
+                <ul class="text-xs text-blue-200 space-y-1 text-left">
+                    <li>• Vérifiez l'orthographe de l'URL</li>
+                    <li>• Utilisez le menu de navigation</li>
+                    <li>• Retournez à la page d'accueil</li>
+                </ul>
+            </div>
+
+            <!-- === BOUTONS D'ACTION (votre excellente structure améliorée) === -->
+            <div class="space-y-3 w-full">
+                <a
+                    href="/"
+                    class="btn-primary w-full inline-flex items-center justify-center gap-2 focus-ring"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    Retour au Flux 24H
+                </a>
+
+                <a
+                    href="/apropos"
+                    class="btn-secondary w-full inline-flex items-center justify-center gap-2 focus-ring"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                    À propos d'INFODROP
+                </a>
+            </div>
+
+            <!-- === MESSAGE D'AIDE (votre excellente idée améliorée) === -->
+            <div
+                class="mt-6 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg w-full"
+            >
+                <p class="text-xs text-blue-300 flex items-start gap-2">
+                    <span class="text-sm" aria-hidden="true">💡</span>
+                    <span>
+                        Besoin d'aide ? Contactez-nous sur
+                        <a
+                            href="https://x.com/LOR4_14"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-blue-400 hover:underline font-medium focus-ring rounded"
+                        >
+                            @LOR4_14
+                            <span class="sr-only"
+                                >(ouvre dans un nouvel onglet)</span
+                            >
+                        </a>
+                    </span>
+                </p>
+            </div>
+
+            <!-- === CODE DE STATUT POUR DÉVELOPPEURS (votre excellente idée) === -->
+            <div class="mt-4 text-xs text-gray-500 font-mono">
+                HTTP 404 • INFODROP v4.0.0-beta
+            </div>
+
+            <!-- === NAVIGATION RAPIDE BONUS === -->
+            <details class="mt-4 w-full">
+                <summary
+                    class="text-xs text-gray-500 cursor-pointer hover:text-gray-400 transition"
+                >
+                    🔍 Pages populaires
+                </summary>
+                <div class="mt-2 space-y-1">
+                    <a
+                        href="/"
+                        class="block text-xs text-blue-400 hover:text-blue-300 py-1"
+                        >📰 Flux d'actualités</a
+                    >
+                    <a
+                        href="/infodrop360"
+                        class="block text-xs text-blue-400 hover:text-blue-300 py-1"
+                        >🌐 Analyses 360°</a
+                    >
+                    <a
+                        href="/apropos"
+                        class="block text-xs text-blue-400 hover:text-blue-300 py-1"
+                        >ℹ️ À propos</a
+                    >
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- === EASTER EGG SUBTIL === -->
+    <div
+        class="fixed bottom-4 left-4 text-xs text-gray-700 opacity-50 pointer-events-none"
+    >
+        <p>🔍 Page perdue dans l'espace-temps</p>
     </div>
 </Layout>
+
+<style>
+    /* Animation subtile pour la carte */
+    .rounded-xl {
+        animation: gentleFloat 6s ease-in-out infinite;
+    }
+
+    @keyframes gentleFloat {
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-4px);
+        }
+    }
+
+    /* Amélioration du focus */
+    .focus-ring:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+    }
+
+    /* Optimisation mobile */
+    @media (max-width: 640px) {
+        .text-7xl {
+            font-size: 4rem;
+        }
+
+        .text-3xl {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Amélioration du contraste */
+    @media (prefers-contrast: high) {
+        .bg-gray-800\/50 {
+            background: rgb(31 41 55 / 0.8);
+        }
+
+        .text-gray-400 {
+            color: rgb(156 163 175);
+        }
+    }
+
+    /* Réduction de mouvement */
+    @media (prefers-reduced-motion: reduce) {
+        .rounded-xl {
+            animation: none;
+        }
+    }
+
+    /* Effet hover amélioré pour les boutons */
+    .btn-primary:hover,
+    .btn-secondary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<script>
+    // Amélioration UX : enregistrer l'URL tentée pour analytics/debug
+    document.addEventListener("DOMContentLoaded", function () {
+        const attemptedUrl = window.location.pathname;
+
+        // Log de l'erreur 404 (peut être envoyé à un service d'analytics)
+        console.log("🔍 404 Error:", {
+            url: attemptedUrl,
+            referrer: document.referrer,
+            timestamp: new Date().toISOString(),
+        });
+
+        // Suggestion intelligente basée sur l'URL
+        if (attemptedUrl.includes("admin")) {
+            const suggestion = document.createElement("div");
+            suggestion.className =
+                "mt-2 p-2 bg-orange-900/20 border border-orange-700/30 rounded text-xs text-orange-300";
+            suggestion.innerHTML =
+                '🔑 Cherchiez-vous la <a href="/" class="underline">page de connexion</a> ?';
+            const spaceY3 = document.querySelector(".space-y-3");
+            if (spaceY3) {
+                spaceY3.appendChild(suggestion);
+            }
+        }
+    });
+
+    // Raccourci clavier pour navigation rapide
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "h" || e.key === "H") {
+            window.location.href = "/";
+        }
+    });
+</script>

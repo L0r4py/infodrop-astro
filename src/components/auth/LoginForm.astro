@@ -1,0 +1,85 @@
+---
+// src/components/auth/LoginForm.astro
+// Composant dédié au formulaire de connexion
+---
+
+<div class="min-h-screen flex items-center justify-center p-4 bg-gray-900">
+    <div
+        class="max-w-sm w-full bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-2xl p-8 border border-gray-700"
+    >
+        <h1 class="text-3xl font-bold text-center text-white mb-2">
+            📰 INFODROP
+        </h1>
+        <p class="text-gray-400 text-center mb-8">
+            Le Club privé de l'actu centralisée
+        </p>
+
+        <!-- === FORMULAIRE DE CONNEXION === -->
+        <form @submit.prevent="login()" class="space-y-4">
+            <div>
+                <input
+                    x-model="email"
+                    type="email"
+                    required
+                    @input="email = email.toLowerCase()"
+                    class="form-input"
+                    placeholder="votre@email.com"
+                />
+            </div>
+
+            <!-- === CHAMP CODE D'INVITATION === -->
+            <div>
+                <input
+                    x-model="inviteCode"
+                    type="text"
+                    class="form-input"
+                    placeholder="Code d'invitation (si nouveau)"
+                />
+            </div>
+
+            <button
+                type="submit"
+                :disabled="loading"
+                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                <span x-show="!loading">Recevoir le lien magique</span>
+                <span
+                    x-show="loading"
+                    class="flex items-center justify-center gap-2"
+                >
+                    <div class="spinner"></div>
+                    Envoi en cours...
+                </span>
+            </button>
+        </form>
+
+        <!-- === LIEN D'AIDE === -->
+        <p class="text-xs text-center text-gray-500 mt-4">
+            💡 Pas de code ? Suivez
+            <a
+                href="https://x.com/LOR4_14"
+                target="_blank"
+                class="text-blue-400 hover:underline"
+            >
+                nos annonces
+            </a>
+            pour en gagner un !
+        </p>
+
+        <!-- === MESSAGES DE RETOUR === -->
+        <div x-show="message" x-transition class="mt-4">
+            <div
+                class="alert"
+                :class="messageType === 'error' ? 'alert-error' : 'alert-success'"
+                x-text="message"
+            >
+            </div>
+        </div>
+
+        <!-- === VERSION ET CRÉDITS === -->
+        <div class="mt-6 text-center">
+            <p class="text-xs text-gray-600">v4.0.0-beta</p>
+            <p class="text-xs text-gray-600 mt-1">Un projet 3C - EM&LPy</p>
+        </div>
+    </div>
+</div>
